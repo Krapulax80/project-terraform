@@ -14,9 +14,9 @@ variable "new-vms" {
 # Use an offset to start counting from a certain number
 # or else the first server will be named server-01 and receive an ip address 172.16.20.x- or what ever starting value you define in the next two variable
 variable "offset" {
-  default = 0
+  default = 1
 }
-# Start number in last octect of ipv4 address
+# Start number in last octect of ipv4 address [+1]
 variable "start_ipv4_address" {
   default = 190
 }
@@ -63,12 +63,13 @@ data "vsphere_virtual_machine" "template" {
   name          = "${var.source_vm}"
   datacenter_id = "${data.vsphere_datacenter.dc.id}"
 }
+#################################################################### RESOURCE CREATION ####################################################################
 
 resource "vsphere_virtual_machine" "vm" {
   count = "${var.new-vms}"
   # Define VM name using the resource count +1 making the first name server-01
   # except when an offset is used. If for example offset=1 the first name is server-02
-  name             = "${var.name_prefix}${format("%02d", count.index + 1 + var.offset)}"
+  name             = "${var.name_prefix}${format("%02d", count.index + 0 + var.offset)}"
   resource_pool_id = "${data.vsphere_compute_cluster.cluster.resource_pool_id}"
 
   /*
@@ -80,7 +81,7 @@ resource "vsphere_virtual_machine" "vm" {
   datastore_id = "${data.vsphere_datastore.datastore.id}"
 
   num_cpus = 2 # default setting, can be adjusted / perhaps added to a variable latter
-  memory   = 2048 # default setting, can be adjusted / perhaps added to a variable latter
+  memory   = 8096 # default setting, can be adjusted / perhaps added to a variable latter
   guest_id = "${data.vsphere_virtual_machine.template.guest_id}"
 
   scsi_type = "${data.vsphere_virtual_machine.template.scsi_type}"
@@ -106,13 +107,13 @@ resource "vsphere_virtual_machine" "vm" {
         Define hostname using the resource count +1 making the first name server-01
         except when an offset is used. If for example offset=1 the first name is server-02
         */
-        computer_name = "${var.name_prefix}${format("%02d", count.index + 1 + var.offset)}"
+        computer_name = "${var.name_prefix}${format("%02d", count.index + 0 + var.offset)}"
         workgroup    = "supportingeducation.com" # default setting, can be adjusted / perhaps added to a variable latter
         admin_password = "Yln0l4c0l" # default setting, can be adjusted / perhaps added to a variable latter
       }
 
       network_interface {
-        ipv4_address = "${format("172.16.20.%d", (count.index + 1 + var.offset + var.start_ipv4_address))}"
+        ipv4_address = "${format("172.16.20.%d", (count.index + 0 + var.offset + var.start_ipv4_address))}"
         ipv4_netmask = 23
       }
 
