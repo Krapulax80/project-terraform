@@ -1,4 +1,4 @@
-################################################################################ DEFINE VARIABLES ################################################################################
+### DEFINE VARIABLES #######################################################################################################################################################################################################################
 # Template to be used
 variable "source_vm" {
   default = "Windows 2019 Std 100GB"
@@ -34,8 +34,13 @@ variable "vm_RAM" {
 variable "vm_folder" {
   default = "PreProduction"
 }
+# Notes on the server. Update if needed
+variable "vm_annotation" {
+  default = "Created by Terraform"
 
-#################################################################### SYSTEM PARAMETERS - no need to chagne ####################################################################
+}
+
+## SYSTEM PARAMETERS - no need to change ############################################################################################################################################################################################################
 
 # Initialize vSphere provider, variables can be assigned with the var-file terraform parameter
 provider "vsphere" {
@@ -77,7 +82,7 @@ data "vsphere_virtual_machine" "template" {
   name          = "${var.source_vm}"
   datacenter_id = "${data.vsphere_datacenter.dc.id}"
 }
-#################################################################### RESOURCE CREATION ####################################################################
+### RESOURCE CREATION ############################################################################################################################################################################################################
 
 # This is the actual creation process
 resource "vsphere_virtual_machine" "vm" {
@@ -95,9 +100,10 @@ resource "vsphere_virtual_machine" "vm" {
   ## changed back to datastore - EFS
   datastore_id = "${data.vsphere_datastore.datastore.id}"
 
+  annotation = "${var.vm_annotation}"
   num_cpus = "${var.vm_CPUs}"
-  memory   = "${var.vm_RAM}" # default setting, can be adjusted / perhaps added to a variable latter
-  folder   =  "${var.vm_folder}"  # update if needed
+  memory   = "${var.vm_RAM}"
+  folder   =  "${var.vm_folder}"
   guest_id = "${data.vsphere_virtual_machine.template.guest_id}"
 
   scsi_type = "${data.vsphere_virtual_machine.template.scsi_type}"
@@ -137,3 +143,5 @@ resource "vsphere_virtual_machine" "vm" {
     }
   }
 }
+
+################################################################################################################################################################################################################################################################################
