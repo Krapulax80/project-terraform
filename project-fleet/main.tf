@@ -20,6 +20,20 @@ variable "offset" {
 variable "start_ipv4_address" {
   default = 190
 }
+# Number of CPUs
+variable "vm_CPUs" {
+  default = 2
+}
+
+# Amount of RAM
+variable "vm_RAM" {
+  default = 8096
+}
+
+# Folder to crate the VM in
+variable "vm_folder" {
+  default = "PreProduction"
+}
 
 #################################################################### SYSTEM PARAMETERS - no need to chagne ####################################################################
 
@@ -65,6 +79,7 @@ data "vsphere_virtual_machine" "template" {
 }
 #################################################################### RESOURCE CREATION ####################################################################
 
+# This is the actual creation process
 resource "vsphere_virtual_machine" "vm" {
   count = "${var.new-vms}"
   # Define VM name using the resource count +1 making the first name server-01
@@ -80,8 +95,9 @@ resource "vsphere_virtual_machine" "vm" {
   ## changed back to datastore - EFS
   datastore_id = "${data.vsphere_datastore.datastore.id}"
 
-  num_cpus = 2 # default setting, can be adjusted / perhaps added to a variable latter
-  memory   = 8096 # default setting, can be adjusted / perhaps added to a variable latter
+  num_cpus = "${var.vm_CPUs}"
+  memory   = "${var.vm_RAM}" # default setting, can be adjusted / perhaps added to a variable latter
+  folder   =  "${var.vm_folder}"  # update if needed
   guest_id = "${data.vsphere_virtual_machine.template.guest_id}"
 
   scsi_type = "${data.vsphere_virtual_machine.template.scsi_type}"
