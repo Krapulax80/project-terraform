@@ -5,7 +5,7 @@ variable "source_vm" {
 }
 # Name of the VM or VMs
 variable "name_prefix" {
-  default = "ITVXCHEF"
+  default = "ITVXDEVOP"
 }
 # How many - consecutive - VM-s to deploy (1 or more)
 variable "new-vms" {
@@ -18,7 +18,7 @@ variable "offset" {
 }
 # Start number in last octect of ipv4 address [+1]
 variable "start_ipv4_address" {
-  default = 156
+  default = 155
 }
 # Number of CPUs
 variable "vm_CPUs" {
