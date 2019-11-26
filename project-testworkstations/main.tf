@@ -131,6 +131,10 @@ resource "vsphere_virtual_machine" "vm" {
         workgroup      = "supportingeducation.com" # default setting, can be adjusted / perhaps added to a variable latter
         admin_password = "Yln0l4c0l"               # default setting, can be adjusted / perhaps added to a variable latter
       }
+      
+       // To use DHCP, declare an empty network_interface block for each configured interface.
+      network_interface {}
+      
       # network_interface { # commented out due to DHCP
       #   ipv4_address = "${format("172.16.20.%d", (count.index + 0 + var.offset + var.start_ipv4_address))}"
       #   ipv4_netmask = 23
